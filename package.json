@@ -1,0 +1,28 @@
+{
+  "name": "desy",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --config ./config/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelgenesini/desy.git"
+  },
+  "author": "michael.genesini@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michaelgenesini/desy/issues"
+  },
+  "homepage": "https://github.com/michaelgenesini/desy#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "webpack": "^3.8.1"
+  },
+  "devDependencies": {
+    "static-site-generator-webpack-plugin": "^3.4.1"
+  }
+}
