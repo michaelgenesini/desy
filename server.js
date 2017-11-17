@@ -30,10 +30,10 @@ recursiveMapFilesAndFolders('./src/', data => {
         })
     })
 
-})
+    const server = http.createServer(app)
+    server.listen(PORT, HOST, () => {
+        const address = server.address()
+        console.log('Listening on:', address.port)
+    })
 
-const server = http.createServer(app)
-server.listen(PORT, HOST, () => {
-    const address = server.address()
-    console.log('Listening on:', address.port)
 })
