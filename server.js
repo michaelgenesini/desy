@@ -8,19 +8,7 @@ const PROD = process.env.NODE_ENV === 'production'
 const PORT = process.env.APP_PORT || 3000
 const HOST = process.env.APP_HOST || '0.0.0.0'
 const app = express()
-let data = {}
-let pages = []
-recursiveMapFilesAndFolders('./src/', (filename, content) => {
-    var route = filename.replace('src', '').replace('index.hbs', '')
-    data[route.toLowerCase()] = {
-        filename: filename,
-        content: content
-    }
-    pages.push({
-        link: route.toLowerCase(),
-        name: route
-    })
-})
+
 app.set('views', path.resolve(__dirname))
 app.engine('hbs', hbs({
     defaultLayout: path.resolve(__dirname, 'layout.hbs'),
@@ -29,13 +17,21 @@ app.engine('hbs', hbs({
 app.set('view engine', 'hbs')
 app.use('/static', express.static('dist'))
 
-app.get("/:route?", function(req, res, next) {
-    var route = req.params.route ? data[`/${req.params.route}/`] : data['/'];
-    res.render(route.filename, {
-        menu: pages,
-        data: data
+app.get('/data', (req, res) => res.send(data))
+
+recursiveMapFilesAndFolders('./src/', data => {
+
+    data.routes.forEach(route => {
+        app.get(route.route, function(req, res, next) {
+            res.render(route.filename, {
+                menu: data.pages,
+                data: data.routes
+            })
+        })
     })
+
 })
+
 const server = http.createServer(app)
 server.listen(PORT, HOST, () => {
     const address = server.address()

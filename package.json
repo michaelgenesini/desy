@@ -19,7 +19,9 @@
   "homepage": "https://github.com/michaelgenesini/desy#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "express-handlebars": "^3.0.0"
+    "express-handlebars": "^3.0.0",
+    "filehound": "^1.16.2",
+    "fs-extra": "^4.0.2"
   },
   "devDependencies": {}
 }
