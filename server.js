@@ -15,11 +15,11 @@ app.engine('hbs', hbs({
     partialsDir: __dirname + '/src'
 }))
 app.set('view engine', 'hbs')
-app.use('/static', express.static('dist'))
-
-app.get('/data', (req, res) => res.send(data))
+app.use('/static', express.static(path.resolve(__dirname, 'assets')))
 
 recursiveMapFilesAndFolders('./src/', data => {
+
+    app.get('/data', (req, res) => res.send(data))
 
     data.routes.forEach(route => {
         app.get(route.route, function(req, res, next) {
