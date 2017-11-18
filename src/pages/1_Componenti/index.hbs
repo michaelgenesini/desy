@@ -1,0 +1,15 @@
+<ul>
+    {{#each data.subRoutes}}
+        <li><a href="{{route}}">{{name}}</a></li>
+    {{/each}}
+</ul>
+
+{{#if partial}}
+    
+    <div id="partial" data-partial="/static/pages{{partial}}"></div>
+
+{{else}}
+
+    <h1>Componenti</h1>
+
+{{/if}}

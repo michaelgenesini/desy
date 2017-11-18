@@ -1,31 +1,54 @@
 const path = require('path')
 const http = require('http')
 const express = require('express')
-const hbs  = require('express-handlebars')
+const chalk = require('chalk')
+const Handlebars  = require('express-handlebars')
+const Helpers = require('./helpers')
 const recursiveMapFilesAndFolders = require('./engine')
 
 const PROD = process.env.NODE_ENV === 'production'
 const PORT = process.env.APP_PORT || 3000
 const HOST = process.env.APP_HOST || '0.0.0.0'
+
 const app = express()
 
-app.set('views', path.resolve(__dirname))
-app.engine('hbs', hbs({
-    defaultLayout: path.resolve(__dirname, 'layout.hbs'),
-    partialsDir: __dirname + '/src'
-}))
-app.set('view engine', 'hbs')
-app.use('/static', express.static(path.resolve(__dirname, 'assets')))
+const root = path.resolve(__dirname, '.')
+const src = path.resolve(root, 'src')
 
-recursiveMapFilesAndFolders('./src/', data => {
+app.set('views', root)
+const hbs = Handlebars.create({
+    extname: '.hbs',
+    helpers: Helpers,
+    defaultLayout: path.resolve(src, 'layout.hbs'),
+    partialsDir: path.resolve(src, 'pages')
+})
+app.engine('hbs', hbs.engine)
+app.set('view engine', 'hbs')
+
+app.use('/static', express.static(src))
+
+recursiveMapFilesAndFolders(src, 'pages', data => {
 
     app.get('/data', (req, res) => res.send(data))
 
     data.routes.forEach(route => {
+
         app.get(route.route, function(req, res, next) {
-            res.render(route.filename, {
+            res.render('./src/pages/'+route.filename, {
                 menu: data.pages,
-                data: data.routes
+                data: route,
+                currentRoute: route.route
+            })
+        })
+
+        route.subRoutes.forEach(subRoute => {
+            app.get(subRoute.route, function(req, res, next) {
+                res.render('./src/pages/'+subRoute.parentFilename, {
+                    menu: data.pages,
+                    data: route,
+                    currentRoute: route.route,
+                    partial: subRoute.filename
+                })
             })
         })
     })
@@ -33,7 +56,7 @@ recursiveMapFilesAndFolders('./src/', data => {
     const server = http.createServer(app)
     server.listen(PORT, HOST, () => {
         const address = server.address()
-        console.log('Listening on:', address.port)
+        console.log(chalk.green(` Listening on: http://${HOST}:${address.port} `))
     })
 
 })
